@@ -3,11 +3,11 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import helmet from 'helmet'; // For securing HTTP headers
 
-import { runInstagram } from './client/Instagram';
+import { runTwitter } from './client/X-bot';
 import logger, { setupErrorHandlers } from './config/logger';
 import { setup_HandleError } from './utils';
 import { connectDB } from './config/db';
-// import { main as twitterMain } from './client/Twitter'; //
+// import { runInstagram } from './client/Instagram'; // Commented out Instagram
 // import { main as githubMain } from './client/GitHub'; // 
 
 // Set up process-level error handlers
@@ -29,13 +29,13 @@ app.use(cookieParser()); // Cookie parsing
 
 const runAgents = async () => {
     while (true) {
-        logger.info("Starting Instagram agent iteration...");
-        await runInstagram();
-        logger.info("Instagram agent iteration finished.");
+        logger.info("Starting Twitter agent iteration...");
+        await runTwitter();
+        logger.info("Twitter agent iteration finished.");
 
-        // logger.info("Starting Twitter agent...");
-        // await twitterMain();
-        // logger.info("Twitter agent finished.");
+        // logger.info("Starting Instagram agent iteration...");
+        // await runInstagram();
+        // logger.info("Instagram agent iteration finished.");
 
         // logger.info("Starting GitHub agent...");
         // await githubMain();
@@ -47,7 +47,7 @@ const runAgents = async () => {
 };
 
 runAgents().catch(error => {
-    setup_HandleError(error , "Error running agents:");
+    setup_HandleError(error, "Error running agents:");
 });
 
 export default app;
