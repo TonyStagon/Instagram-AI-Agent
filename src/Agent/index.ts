@@ -2,12 +2,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import logger from "../config/logger";
 import { geminiApiKeys } from "../secret";
 import { handleError } from "../utils";
-import { InstagramCommentSchema } from "./schema";
+import { getInstagramCommentSchema } from "./schema";
 import fs from "fs";
 import path from "path";
 import * as readlineSync from "readline-sync";
 
-export async function runAgent(schema: InstagramCommentSchema, prompt: string): Promise<any> {
+export async function runAgent(schema: ReturnType<typeof getInstagramCommentSchema>, prompt: string): Promise<any> {
     let currentApiKeyIndex = 0;  
     let geminiApiKey = geminiApiKeys[currentApiKeyIndex];
 

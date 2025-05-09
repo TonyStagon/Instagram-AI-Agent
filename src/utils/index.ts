@@ -42,7 +42,42 @@ export async function Instagram_cookiesExist(): Promise<boolean> {
 }
 
 
+export async function Twitter_cookiesExist(): Promise<boolean> {
+    try {
+        const cookiesPath = "./cookies/Twittercookies.json";
+        await fs.access(cookiesPath); // Check if file exists
 
+        const cookiesData = await fs.readFile(cookiesPath, "utf-8");
+        const cookies = JSON.parse(cookiesData);
+
+        // Twitter-specific cookie validation
+        const authCookie = cookies.find((cookie: { name: string }) => cookie.name === 'auth_token');
+        const csrfCookie = cookies.find((cookie: { name: string }) => cookie.name === 'ct0');
+
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        // Validate auth_token cookie
+        if (authCookie && authCookie.expires > currentTimestamp) {
+            return true;
+        }
+
+        // Fallback to CSRF token if auth_token is missing or expired
+        if (csrfCookie && csrfCookie.expires > currentTimestamp) {
+            return true;
+        }
+
+        return false;
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code === 'ENOENT') {
+            logger.warn("Twitter cookies file does not exist.");
+            return false;
+        } else {
+            logger.error("Error checking Twitter cookies:", error);
+            return false;
+        }
+    }
+}
 export async function saveCookies(cookiesPath: string, cookies: any[]): Promise<void> {
     try {
         const dir = path.dirname(cookiesPath);
